@@ -12,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<OpenFoodFactsDatabaseSettings>(
     builder.Configuration.GetSection("OpenFoodsDatabase"));
 
+builder.Services.Configure<CronSettings>(
+    builder.Configuration.GetSection("CronSettings"));
+
 builder.Services.AddSingleton<FoodsService>();
 builder.Services.AddSingleton<CronService>();
 
@@ -20,11 +23,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddCronJob<CronTask>(c =>
-//{
-//    c.TimeZoneInfo = TimeZoneInfo.Local;
-//    c.CronExpression = @"* * * * *";
-//});
+builder.Services.AddCronJob<CronTask>(c =>
+{
+    c.TimeZoneInfo = TimeZoneInfo.Local;
+    c.CronExpression = @"* * * * *";
+});
 
 builder.Services.AddHttpContextAccessor();
 

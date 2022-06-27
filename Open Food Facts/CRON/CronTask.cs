@@ -8,6 +8,7 @@ using System.Net;
 using System.IO.Compression;
 using System.Diagnostics;
 using OpenFoodFacts.Services.Interfaces;
+using System.Text;
 
 namespace OpenFoodFacts.CRON
 {
@@ -16,8 +17,9 @@ namespace OpenFoodFacts.CRON
         private readonly FoodsService _foodsService;
         private readonly IMongoCollection<Food> _foodsCollection;
         private readonly IMongoCollection<Cron> _cronCollection;
-        private static readonly HttpClient _httpClient = new HttpClient();
-        public CronTask(IScheduleConfig<CronTask> config, IOptions<OpenFoodFactsDatabaseSettings> openFoodFactsDatabaseSettings) : base(config.CronExpression, config.TimeZoneInfo)
+        private readonly string _downloadPath;
+        private readonly string _localDirectory;
+        public CronTask(IScheduleConfig<CronTask> config, IOptions<CronSettings> cronSettings, IOptions<OpenFoodFactsDatabaseSettings> openFoodFactsDatabaseSettings) : base(config.CronExpression, config.TimeZoneInfo)
         {
             var mongoClient = new MongoClient(openFoodFactsDatabaseSettings.Value.ConnectionString);
 
@@ -26,6 +28,9 @@ namespace OpenFoodFacts.CRON
             _foodsCollection = mongoDatabase.GetCollection<Food>(openFoodFactsDatabaseSettings.Value.FoodsCollectionName);
 
             _cronCollection = mongoDatabase.GetCollection<Cron>(openFoodFactsDatabaseSettings.Value.CronCollectionName);
+
+            _downloadPath = cronSettings.Value.DownloadPath;
+            _localDirectory = cronSettings.Value.LocalDirectory;
         }
 
         public override Task DoWork(CancellationToken cancellationToken)
@@ -49,13 +54,16 @@ namespace OpenFoodFacts.CRON
                 intFileNumber++;
                 string strFileNumber = intFileNumber.ToString();
 
-                if (intFileNumber < 9)
+                if (intFileNumber <= 9)
                     strFileNumber = "0" + strFileNumber;
+                else
+                    strFileNumber = "01";
+                
 
-                string address = "https://challenges.coode.sh/food/data/json/";
+                string address = _downloadPath;
                 string filename = "products_"+ strFileNumber + ".json.gz";
                 string decompressedFileName = "products_" + strFileNumber + ".json";
-                string directory = "C:/Users/vtaparosky/source/repos/Open Food Facts/Open Food Facts/Files/";
+                string directory = _localDirectory;
                 string downloadPath = directory + filename;
                 
                 System.Uri uri = new System.Uri(address + filename);
@@ -85,7 +93,20 @@ namespace OpenFoodFacts.CRON
                     if (json != null)
                     {
                         Food deserializedFood = JsonSerializer.Deserialize<Food>(json.ElementAt(i));
-                        deserializedFood.Imported_t = DateTime.Now;
+
+                        if (deserializedFood.code != null)
+                        {
+                            StringBuilder sb = new StringBuilder();
+                            foreach (char c in deserializedFood.code)
+                            {
+                                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_')
+                                {
+                                    sb.Append(c);
+                                }
+                            }
+                            deserializedFood.code = sb.ToString();
+                        }
+                        deserializedFood.imported_t = DateTime.Now;
                         deserializedFood.Status = Food.status.published;
                         _foodsCollection.InsertOneAsync(deserializedFood);
 

@@ -9,71 +9,55 @@ namespace OpenFoodFacts.Models.Products
         [BsonIgnoreIfDefault]
         public ObjectId Id { get; set; }
 
-        [BsonElement("code")]
-        public string Code { get; set; }
+        public string code { get; set; }
         public enum status { draft, published, trash }
 
         [BsonElement("status")]
         public status Status { get; set; }
 
-        [BsonElement("imported_t")]
-        public DateTime Imported_t { get; set; }
 
-        [BsonElement("url")]
-        public string? Url { get; set; }
+        public DateTime imported_t { get; set; }
 
-        [BsonElement("creator")]
-        public string? Creator { get; set; }
 
-        [BsonElement("created_t")]
-        public string? Created_t { get; set; }
+        public string? url { get; set; }
 
-        [BsonElement("last_modified_t")]
-        public string? Last_modified_t { get; set; }
+        public string? creator { get; set; }
 
-        [BsonElement("product_name")]
+        public string? created_t { get; set; }
+
+        public string? last_modified_t { get; set; }
+
         public string? product_name { get; set; }
 
-        [BsonElement("quantity")]
-        public string? Quantity { get; set; }
+        public string? quantity { get; set; }
 
-        [BsonElement("brands")]
-        public string? Brands { get; set; }
 
-        [BsonElement("categories")]
-        public string? Categories { get; set; }
+        public string? brands { get; set; }
 
-        [BsonElement("labels")]
-        public string? Labels { get; set; }
 
-        [BsonElement("cities")]
-        public string? Cities { get; set; }
+        public string? categories { get; set; }
 
-        [BsonElement("purchase_places")]
-        public string? Purchase_places { get; set; }
 
-        [BsonElement("stores")]
-        public string? Stores { get; set; }
+        public string? labels { get; set; }
 
-        [BsonElement("ingredients_text")]
-        public string? Ingredients_text { get; set; }
 
-        [BsonElement("traces")]
-        public string? Traces { get; set; }
+        public string? cities { get; set; }
 
-        [BsonElement("serving_size")]
-        public string? Serving_size { get; set; }
+        public string? purchase_places { get; set; }
+        public string? stores { get; set; }
 
-        [BsonElement("serving_quantity")]
-        public string? Serving_quantity { get; set; }
+        public string? ingredients_text { get; set; }
 
-        [BsonElement("nutriscore_score")]
-        public string? Nutriscore_score { get; set; }
+        public string? traces { get; set; }
 
-        [BsonElement("nutriscore_grade")]
-        public string? Nutriscore_grade { get; set; }
+        public string? serving_size { get; set; }
 
-        [BsonElement("main_category")]
+        public string? serving_quantity { get; set; }
+
+        public string? nutriscore_score { get; set; }
+
+        public string? nutriscore_grade { get; set; }
+
         public string? main_category { get; set; }
         public string? image_url { get; set; }
        

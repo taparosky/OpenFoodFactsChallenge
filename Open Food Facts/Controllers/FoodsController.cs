@@ -48,7 +48,7 @@ namespace OpenFoodFacts.Controllers
         {
             await _foodsService.CreateAsync(newFood);
 
-            return CreatedAtAction(nameof(Get), new { code = newFood.Code }, newFood);
+            return CreatedAtAction(nameof(Get), new { code = newFood.code }, newFood);
         }
 
         [HttpPut("{code}")]
@@ -61,7 +61,7 @@ namespace OpenFoodFacts.Controllers
                 return NotFound();
             }
 
-            updatedFood.Code = Food.Code;
+            updatedFood.code = Food.code;
 
             await _foodsService.UpdateAsync(code, updatedFood);
 

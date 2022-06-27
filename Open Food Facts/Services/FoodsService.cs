@@ -44,18 +44,18 @@ namespace OpenFoodFacts.Services
             
 
         public async Task<Food?> GetAsync(string code) =>
-            await _foodsCollection.Find(x => x.Code == code).FirstOrDefaultAsync();
+            await _foodsCollection.Find(x => x.code == code).FirstOrDefaultAsync();
 
         public async Task CreateAsync(Food newFood) =>
             await _foodsCollection.InsertOneAsync(newFood);
 
         public async Task UpdateAsync(string code, Food updatedFood) =>
-            await _foodsCollection.ReplaceOneAsync(x => x.Code == code, updatedFood);
+            await _foodsCollection.ReplaceOneAsync(x => x.code == code, updatedFood);
 
         public async Task Delete(string code)
         {
             var update = Builders<Food>.Update.Set(f => f.Status, Food.status.trash);
-            await _foodsCollection.UpdateOneAsync(f => f.Code == code, update);
+            await _foodsCollection.UpdateOneAsync(f => f.code == code, update);
         }
 
     }
